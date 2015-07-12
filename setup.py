@@ -9,7 +9,7 @@ setup(
     author_email='brent.tubbs@gmail.com',
     packages=find_packages(),
     include_package_data=True,
-    url='https://bitbucket.org/yougov/velociraptor',
+    url='https://bitbucket.org/yougov/vr.runners',
     install_requires=[
         'vr.common>=3.16.2,<5dev',
         'requests>=1.2.0',
