@@ -20,5 +20,5 @@ setup(
             'vrun_precise = vr.runners.precise:main',
         ]
     },
-    description=('Command line tools to launch procs.'),
+    description='Command line tools to launch procs.',
 )
