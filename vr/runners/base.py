@@ -12,6 +12,7 @@ import textwrap
 
 import requests
 import yaml
+import path
 
 from vr.common.paths import (get_container_name, get_buildfile_path,
                              BUILDS_ROOT, get_app_path, get_container_path,
@@ -302,31 +303,18 @@ def untar(tarpath, outfolder, owners=None, overwrite=True, fixperms=True):
             tf.close()
 
         if owners is not None:
-            username, groupname = owners
-            user = pwd.getpwnam(username)
-            group = grp.getgrnam(groupname)
-            for root, dirs, files in os.walk('contents'):
-                for d in dirs:
-                    path = os.path.join(root, d)
+            contents = path.Path('contents')
+            for item in contents.walk():
+                if item.isdir():
                     # chown user:group
-                    os.chown(path, user.pw_uid, group.gr_gid)
+                    item.chown(*owners)
                     # chmod ug+xr
-                    st = os.stat(path)
-                    os.chmod(path, st.st_mode | stat.S_IXUSR
-                                              | stat.S_IXGRP
-                                              | stat.S_IRUSR
-                                              | stat.S_IRGRP)
-                for f in files:
-                    path = os.path.join(root, f)
-                    if not os.path.islink(path):
-                        # chown nobody:admin
-                        os.chown(path, user.pw_uid, group.gr_gid)
-                        # chmod ug+rw
-                        st = os.stat(path)
-                        os.chmod(path, st.st_mode | stat.S_IWUSR
-                                                  | stat.S_IWGRP
-                                                  | stat.S_IRUSR
-                                                  | stat.S_IRGRP)
+                    item.chmod('ug+xr')
+                for item.isfile() and not item.islink():
+                    # chown user:group
+                    item.chown(*owners)
+                    # chmod ug+rw
+                    item.chmod('ug+rw')
 
         if os.path.isdir(outfolder):
             if overwrite:
