@@ -16,9 +16,9 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'vrun = vr.runners.image:main',
-            'vrun_precise = vr.runners.precise:main',
-        ]
+            'vrun = vr.runners.image:ImageRunner.invoke',
+            'vrun_precise = vr.runners.precise:PreciseRunner.invoke',
+        ],
     },
     description='Command line tools to launch procs.',
 )

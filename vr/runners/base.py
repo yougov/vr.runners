@@ -264,6 +264,11 @@ class BaseRunner(object):
         with open(filepath, 'w') as f:
             f.write(content)
 
+    @classmethod
+    def invoke(cls):
+        "Instantiate and invoke the runner"
+        cls().main()
+
 
 def untar(tarpath, outfolder, owners=None, overwrite=True, fixperms=True):
     """

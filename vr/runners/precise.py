@@ -12,11 +12,6 @@ from vr.common.paths import get_container_path, get_proc_path
 from vr.runners.base import BaseRunner, mkdir
 
 
-def main():
-    runner = PreciseRunner()
-    runner.main()
-
-
 class PreciseRunner(BaseRunner):
 
     lxc_template_name = 'precise.lxc'
@@ -56,5 +51,4 @@ class PreciseRunner(BaseRunner):
             mkdir(os.path.join(container_path, inside.lstrip('/')))
 
 
-if __name__ == '__main__':
-    main()
+__name__ == '__main__' and PreciseRunner.invoke()

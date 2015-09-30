@@ -13,11 +13,6 @@ from vr.runners.base import (BaseRunner, mkdir, ensure_file, untar,
 IMAGES_ROOT = VR_ROOT + '/images'
 
 
-def main():
-    runner = ImageRunner()
-    runner.main()
-
-
 def ensure_image(name, url, images_root, md5, untar_to=None):
     """Ensure OS image at url has been downloaded and (optionally) unpacked."""
     image_dir_path = os.path.join(images_root, name)
@@ -141,3 +136,5 @@ class tmp_umask(object):
     def __exit__(self, type, value, traceback):
         os.umask(self.orig_mask)
 
+
+__name__ == '__main__' and ImageRunner.invoke()
