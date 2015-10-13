@@ -310,7 +310,7 @@ def untar(tarpath, outfolder, owners=None, overwrite=True, fixperms=True):
                     item.chown(*owners)
                     # chmod ug+xr
                     item.chmod('ug+xr')
-                for item.isfile() and not item.islink():
+                if item.isfile() and not item.islink():
                     # chown user:group
                     item.chown(*owners)
                     # chmod ug+rw
