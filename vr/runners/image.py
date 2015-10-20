@@ -1,7 +1,9 @@
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 
 import os
 import stat
+
+import path
 
 from vr.common.paths import (get_container_name,
                              get_container_path, VR_ROOT)
@@ -29,16 +31,15 @@ def prepare_image(tarpath, outfolder, **kwargs):
     Prepare the unpacked image for use as a VR base image.
 
     """
+    outfolder = path.Path(outfolder)
     untar(tarpath, outfolder, **kwargs)
 
     # Some OSes have started making /etc/resolv.conf into a symlink to
     # /run/resolv.conf.  That prevents us from bind-mounting to that
     # location.  So delete that symlink, if it exists.
-    resolv_path = os.path.join(outfolder, 'etc', 'resolv.conf')
-    if os.path.islink(resolv_path):
-        os.remove(resolv_path)
-        with open(resolv_path, 'wb') as f:
-            f.write('')
+    resolv_path = outfolder / 'etc' / 'resolv.conf'
+    if resolv_path.islink():
+        resolv_path.remove().write_text('', encoding='ascii')
 
 
 class ImageRunner(BaseRunner):
