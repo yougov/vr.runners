@@ -55,10 +55,10 @@ class ImageRunner(BaseRunner):
     lxc_template_name = 'image.lxc'
 
     char_devices = (
-        ('/dev/null', (1, 3), 0666),
-        ('/dev/zero', (1, 5), 0666),
-        ('/dev/random', (1, 8), 0444),
-        ('/dev/urandom', (1, 9), 0444),
+        ('/dev/null', (1, 3), 0o666),
+        ('/dev/zero', (1, 5), 0o666),
+        ('/dev/random', (1, 8), 0o444),
+        ('/dev/urandom', (1, 9), 0o444),
     )
 
     def setup(self):
