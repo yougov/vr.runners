@@ -3,11 +3,11 @@ from __future__ import print_function
 import os
 import stat
 
-from vr.common.paths import (get_container_name, get_proc_path,
+from vr.common.paths import (get_container_name,
                              get_container_path, VR_ROOT)
 from vr.common.utils import get_lxc_version
 from vr.runners.base import (BaseRunner, mkdir, ensure_file, untar,
-                             get_template, get_lxc_network_config)
+                             get_lxc_network_config)
 
 
 IMAGES_ROOT = VR_ROOT + '/images'
