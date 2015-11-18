@@ -165,10 +165,22 @@ class BaseRunner(object):
         else:
             cmd = 'run'
 
+        # If we have an app_folder value, then we can use it to determine where
+        # LXC debug logs can live (which is somewhere that build processes are
+        # able to access if they want it).
+        log_args = []
+        if getattr(self.config, 'app_folder', None):
+            log_args = [
+                '--logpriority', 'debug',
+                '--logfile', os.path.join(self.config.app_folder, '.lxcdebug.log'),
+            ]
+
+
         return [
             'lxc-start',
             '--name', name,
             '--rcfile', os.path.join(get_proc_path(self.config), 'proc.lxc'),
+        ] + log_args + [
             '--',
             'su',
             '--preserve-environment',
