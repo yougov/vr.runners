@@ -1,25 +1,24 @@
+# pylint: disable=attribute-defined-outside-init,redefined-outer-name
 from __future__ import print_function
 
 import argparse
-import grp
 import os
 import pkg_resources
-import pwd
 import shutil
 import stat
 import tarfile
-import textwrap
 
 import requests
 import yaml
 import path
 
-from vr.common.paths import (get_container_name, get_buildfile_path,
-                             BUILDS_ROOT, get_app_path, get_container_path,
-                             get_proc_path)
+from vr.common.paths import (
+    get_container_name, get_buildfile_path, BUILDS_ROOT, get_app_path,
+    get_container_path, get_proc_path)
 from vr.common.models import ProcData
-from vr.common.utils import (tmpdir, randchars, mkdir, lock_file, which,
-                             file_md5, get_lxc_version, get_lxc_network_config)
+from vr.common.utils import (
+    tmpdir, randchars, mkdir, lock_file, which, file_md5,
+    get_lxc_version, get_lxc_network_config)
 
 
 class BaseRunner(object):
@@ -45,17 +44,18 @@ class BaseRunner(object):
             raise SystemExit("Command must be one of: %s" %
                              ', '.join(self.commands.keys()))
 
-        with open(args.file, 'r+b') as file:
-            self.config = ProcData(yaml.safe_load(file))
+        with open(args.file, 'r+b') as fid:
+            self.config = ProcData(yaml.safe_load(fid))
 
             # Lock the file for exclusive access. Some commands (such as shell
             # or uptest) may override the behavior by providing a 'lock'
             # attribute on the method.
-            getattr(cmd, 'lock', lock_file)(file)
+            getattr(cmd, 'lock', lock_file)(fid)
             cmd()
 
-    def __close_file(file):
-        file.close()
+    @staticmethod
+    def __close_file(fid):
+        fid.close()
 
     def setup(self):
         print("Setting up", get_container_name(self.config))
@@ -73,7 +73,6 @@ class BaseRunner(object):
     def shell(self):
         print("Running shell for", get_container_name(self.config))
         self._lxc_start(special_cmd='/bin/bash')
-
     shell.lock = __close_file
 
     def untar(self):
@@ -85,8 +84,8 @@ class BaseRunner(object):
 
     def write_proc_sh(self):
         """
-        Write the script that is the first thing called inside the container.  It
-        sets env vars and then calls the real program.
+        Write the script that is the first thing called inside the
+        container.  It sets env vars and then calls the real program.
         """
         print("Writing proc.sh")
         context = {
@@ -102,7 +101,8 @@ class BaseRunner(object):
         with open(sh_path, 'w') as f:
             f.write(rendered)
         st = os.stat(sh_path)
-        os.chmod(sh_path, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+        os.chmod(
+            sh_path, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
     def write_env_sh(self):
         print("Writing env.sh")
@@ -119,8 +119,8 @@ class BaseRunner(object):
         """
         If self.config.cmd is not None, return that.
 
-        Otherwise, read the Procfile inside the build code, parse it (as yaml), and
-        pull out the command for self.config.proc_name.
+        Otherwise, read the Procfile inside the build code, parse it
+        (as yaml), and pull out the command for self.config.proc_name.
         """
         if self.config.cmd is not None:
             return self.config.cmd
@@ -150,7 +150,8 @@ class BaseRunner(object):
         print("Writing settings.yaml")
         path = os.path.join(get_container_path(self.config), 'settings.yaml')
         with open(path, 'w') as f:
-            f.write(yaml.safe_dump(self.config.settings, default_flow_style=False))
+            f.write(
+                yaml.safe_dump(self.config.settings, default_flow_style=False))
 
     def _lxc_start(self, special_cmd=None):
         args = self.get_lxc_args(special_cmd=special_cmd)
@@ -162,8 +163,8 @@ class BaseRunner(object):
         if special_cmd:
             cmd = special_cmd
             # Container names must be unique, so to allow running a shell or
-            # uptests next to the app container we have to add more stuff to the
-            # name.
+            # uptests next to the app container we have to add more
+            # stuff to the name.
             name += '-tmp' + randchars()
         else:
             cmd = 'run'
@@ -175,7 +176,8 @@ class BaseRunner(object):
         if getattr(self.config, 'app_folder', None):
             log_args = [
                 '--logpriority', 'debug',
-                '--logfile', os.path.join(self.config.app_folder, '.lxcdebug.log'),
+                '--logfile', os.path.join(
+                    self.config.app_folder, '.lxcdebug.log'),
             ]
 
         return [
@@ -195,12 +197,14 @@ class BaseRunner(object):
         volumes = getattr(self.config, 'volumes', []) or []
         volume_tmpl = "\nlxc.mount.entry = %s %s%s none bind 0 0"
         for outside, inside in volumes:
-            content += volume_tmpl % (outside, get_container_path(self.config), inside)
+            content += volume_tmpl % (
+                outside, get_container_path(self.config), inside)
         return content
 
     def uptest(self):
         # copy the uptester into the container. ensure it's executable.
-        src = pkg_resources.resource_filename('vr.runners', 'uptester/uptester')
+        src = pkg_resources.resource_filename(
+            'vr.runners', 'uptester/uptester')
         container_path = get_container_path(self.config)
         dest = os.path.join(container_path, 'uptester')
         shutil.copy(src, dest)
@@ -218,14 +222,15 @@ class BaseRunner(object):
                                                self.config.port)
                 self._lxc_start(special_cmd=cmd)
             else:
-                # There are no uptests for this proc.  Output an empty JSON list.
+                # There are no uptests for this proc.  Output an empty
+                # JSON list.
                 print("[]")
     uptest.lock = __close_file
 
     def teardown(self):
         # Everything should have been put in the proc path, so delete that.
-        # We don't delete the build.  That will have to be cleaned up by someone
-        # else.
+        # We don't delete the build.  That will have to be cleaned up
+        # by someone else.
         shutil.rmtree(get_proc_path(self.config))
 
     def make_proc_dirs(self):
@@ -236,7 +241,7 @@ class BaseRunner(object):
         mkdir(container_path)
 
         volumes = getattr(self.config, 'volumes', None) or []
-        for outside, inside in volumes:
+        for _, inside in volumes:
             mkdir(os.path.join(container_path, inside.lstrip('/')))
 
     def get_lxc_memory_limits(self):
@@ -264,14 +269,9 @@ class BaseRunner(object):
 
     def write_proc_lxc(self):
         print("Writing proc.lxc")
-
         proc_path = get_proc_path(self.config)
-        container_path = get_container_path(self.config)
-
         tmpl = get_template(self.lxc_template_name)
-
         content = tmpl % self.get_proc_lxc_tmpl_ctx()
-
         filepath = os.path.join(proc_path, 'proc.lxc')
         with open(filepath, 'w') as f:
             f.write(content)
@@ -299,6 +299,10 @@ def untar(tarpath, outfolder, owners=None, overwrite=True, fixperms=True):
     outfolder will be deleted before the new one is put in place. If outfolder
     already exists and overwrite=False, IOError will be raised.
     """
+
+    # We don't use fixperms at all
+    _ignored = fixperms  # noqa
+
     # make a folder to untar to
     with tmpdir():
         _, _, ext = tarpath.rpartition('.')
