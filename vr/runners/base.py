@@ -68,13 +68,12 @@ class BaseRunner(object):
 
     def run(self):
         print("Running", get_container_name(self.config))
-        args = self.get_lxc_args()
-        os.execve(which('lxc-start')[0], args, {})
+        self._lxc_start()
 
     def shell(self):
         print("Running shell for", get_container_name(self.config))
-        args = self.get_lxc_args(special_cmd='/bin/bash')
-        os.execve(which('lxc-start')[0], args, {})
+        self._lxc_start(special_cmd='/bin/bash')
+
     shell.lock = __close_file
 
     def untar(self):
@@ -153,6 +152,10 @@ class BaseRunner(object):
         with open(path, 'w') as f:
             f.write(yaml.safe_dump(self.config.settings, default_flow_style=False))
 
+    def _lxc_start(self, special_cmd=None):
+        args = self.get_lxc_args(special_cmd=special_cmd)
+        os.execve(which('lxc-start')[0], args, {})
+
     def get_lxc_args(self, special_cmd=None):
 
         name = get_container_name(self.config)
@@ -175,16 +178,13 @@ class BaseRunner(object):
                 '--logfile', os.path.join(self.config.app_folder, '.lxcdebug.log'),
             ]
 
-
         return [
             'lxc-start',
             '--name', name,
             '--rcfile', os.path.join(get_proc_path(self.config), 'proc.lxc'),
         ] + log_args + [
             '--',
-            'su',
-            '--preserve-environment',
-            '--shell', '/bin/bash',
+            '/bin/bash',
             '-c', 'cd /app;source /env.sh; exec /proc.sh "%s"' % cmd,
             self.config.user
         ]
@@ -216,8 +216,7 @@ class BaseRunner(object):
                 inside_path = os.path.join('/app/uptests', proc_name)
                 cmd = '/uptester %s %s %s ' % (inside_path, self.config.host,
                                                self.config.port)
-                args = self.get_lxc_args(special_cmd=cmd)
-                os.execve(which('lxc-start')[0], args, {})
+                self._lxc_start(special_cmd=cmd)
             else:
                 # There are no uptests for this proc.  Output an empty JSON list.
                 print("[]")
