@@ -22,6 +22,11 @@ from vr.common.utils import (
 
 
 class BaseRunner(object):
+    """
+    >>> callable(BaseRunner.shell.lock)
+    True
+    """
+
     def main(self):
         self.commands = {
             'setup': self.setup,
