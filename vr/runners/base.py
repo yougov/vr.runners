@@ -53,7 +53,6 @@ class BaseRunner(object):
             getattr(cmd, 'lock', lock_file)(fid)
             cmd()
 
-    @staticmethod
     def __close_file(fid):
         fid.close()
 
