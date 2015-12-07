@@ -22,4 +22,6 @@ setup(
         ],
     },
     description='Command line tools to launch procs.',
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
 )
