@@ -190,9 +190,22 @@ class BaseRunner(object):
             '--rcfile', os.path.join(get_proc_path(self.config), 'proc.lxc'),
         ] + log_args + [
             '--',
-            '/bin/bash',
+
+            # Note: using `su` seems to crash lxc container when
+            # building certain Py3 projects.
+            # See comments on:
+            # https://bitbucket.org/yougov/vr.runners/commits/05ba82d54636db8e0e0791ee470742d0ef440715
+
+            # 'su',
+            # '--preserve-environment',
+            # '--shell', '/bin/bash',
+            # '-c', 'cd /app;source /env.sh; exec /proc.sh "%s"' % cmd,
+            # self.config.user
+            'sudo',
+            '-u', self.config.user,
+            '--preserve-env',
+            '--shell', '/bin/bash',
             '-c', 'cd /app;source /env.sh; exec /proc.sh "%s"' % cmd,
-            self.config.user
         ]
 
     def get_lxc_volume_str(self):
