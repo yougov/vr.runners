@@ -11,7 +11,7 @@ params = dict(
     include_package_data=True,
     url='https://bitbucket.org/yougov/vr.runners',
     install_requires=[
-        'vr.common>=4.3.0',
+        'vr.common>=4.4.0',
         'requests>=1.2.0',
         'path.py',
     ],
