@@ -195,16 +195,13 @@ class BaseRunner(object):
             # building certain Py3 projects.
             # See comments on:
             # https://bitbucket.org/yougov/vr.runners/commits/05ba82d54636db8e0e0791ee470742d0ef440715
+            # Note: use short options (long options are not supported
+            # by old version of sudo)
 
-            # 'su',
-            # '--preserve-environment',
-            # '--shell', '/bin/bash',
-            # '-c', 'cd /app;source /env.sh; exec /proc.sh "%s"' % cmd,
-            # self.config.user
             'sudo',
             '-u', self.config.user,
-            '--preserve-env',
-            '--shell', '/bin/bash',
+            '-E',  # preserve environment
+            '-s', '/bin/bash',  # shell
             '-c', 'cd /app;source /env.sh; exec /proc.sh "%s"' % cmd,
         ]
 
