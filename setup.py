@@ -4,7 +4,7 @@ import setuptools
 params = dict(
     name='vr.runners',
     namespace_packages=['vr'],
-    version='2.9.0',
+    version='2.9.2',
     author='Brent Tubbs',
     author_email='brent.tubbs@gmail.com',
     packages=setuptools.find_packages(),
