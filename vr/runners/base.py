@@ -46,8 +46,8 @@ class BaseRunner(object):
         try:
             cmd = self.commands[args.command]
         except KeyError:
-            raise SystemExit("Command must be one of: %s" %
-                             ', '.join(self.commands.keys()))
+            msg = 'Command must be one of: ' + ' ,'.join(self.commands)
+            raise SystemExit(msg)
 
         with open(args.file, 'r+b') as fid:
             self.config = ProcData(yaml.safe_load(fid))
