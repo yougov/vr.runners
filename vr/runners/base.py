@@ -36,8 +36,9 @@ class BaseRunner(object):
             'teardown': self.teardown,
         }
 
+        cmd_list = ', '.join(self.commands)
         parser = argparse.ArgumentParser()
-        cmd_help = "One of: %s" % ', '.join(self.commands.keys())
+        cmd_help = 'One of: {cmd_list}'.format(**locals())
         parser.add_argument('command', help=cmd_help)
         parser.add_argument('file', help="Path to proc.yaml file.")
 
@@ -46,7 +47,7 @@ class BaseRunner(object):
         try:
             cmd = self.commands[args.command]
         except KeyError:
-            msg = 'Command must be one of: ' + ', '.join(self.commands)
+            msg = 'Command must be one of: {cmd_list}'.format(**locals())
             raise SystemExit(msg)
 
         with open(args.file, 'r+b') as fid:
