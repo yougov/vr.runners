@@ -242,9 +242,10 @@ class BaseRunner(object):
     uptest.lock = __close_file
 
     def teardown(self):
-        # Everything should have been put in the proc path, so delete that.
-        # We don't delete the build.  That will have to be cleaned up
-        # by someone else.
+        """
+        Delete the proc path where everything has been put.
+        The build will be cleaned up elsewhere.
+        """
         shutil.rmtree(get_proc_path(self.config))
 
     def make_proc_dirs(self):
