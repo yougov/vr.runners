@@ -247,7 +247,8 @@ class BaseRunner(object):
         Delete the proc path where everything has been put.
         The build will be cleaned up elsewhere.
         """
-        shutil.rmtree(get_proc_path(self.config))
+        proc_path = get_proc_path(self.config)
+        os.path.isdir(proc_path) and shutil.rmtree(proc_path)
 
     def make_proc_dirs(self):
         print("Making directories")

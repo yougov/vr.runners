@@ -1,3 +1,9 @@
+2.11.1
+======
+
+* #215: Don't attempt to teardown a directory that doesn't
+  exist.
+
 2.11.0
 ======
 
