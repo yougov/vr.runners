@@ -46,7 +46,7 @@ class BaseRunner(object):
         try:
             cmd = self.commands[args.command]
         except KeyError:
-            msg = 'Command must be one of: ' + ' ,'.join(self.commands)
+            msg = 'Command must be one of: ' + ', '.join(self.commands)
             raise SystemExit(msg)
 
         with open(args.file, 'r+b') as fid:
