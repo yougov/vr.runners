@@ -3,20 +3,16 @@
 # Project skeleton maintained at https://github.com/jaraco/skeleton
 
 import io
-import sys
 
 import setuptools
 
 with io.open('README.rst', encoding='utf-8') as readme:
     long_description = readme.read()
 
-needs_wheel = {'release', 'bdist_wheel', 'dists'}.intersection(sys.argv)
-wheel = ['wheel'] if needs_wheel else []
-
 name = 'vr.runners'
 description = 'Command line tools to launch procs.'
 
-setup_params = dict(
+params = dict(
     name=name,
     use_scm_version=True,
     author='Brent Tubbs',
@@ -27,6 +23,7 @@ setup_params = dict(
     packages=setuptools.find_packages(),
     include_package_data=True,
     namespace_packages=name.split('.')[:-1],
+    python_requires='>=2.7',
     install_requires=[
         'vr.common>=4.4.0',
         'requests>=1.2.0',
@@ -36,7 +33,7 @@ setup_params = dict(
     },
     setup_requires=[
         'setuptools_scm>=1.15.0',
-    ] + wheel,
+    ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
@@ -52,4 +49,4 @@ setup_params = dict(
     },
 )
 if __name__ == '__main__':
-    setuptools.setup(**setup_params)
+	setuptools.setup(**params)
