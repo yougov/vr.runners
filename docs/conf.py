@@ -17,7 +17,7 @@ link_files = {
 		replace=[
 			dict(
 				pattern=r'(Issue )?#(?P<issue>\d+)',
-				url='{package_url}/issues/{issue}',
+				url='{package_url}/../velociraptor/issues/{issue}',
 			),
 			dict(
 				pattern=r'^(?m)((?P<scm_version>v?\d+(\.\d+){1,2}))\n[-=]+\n',
