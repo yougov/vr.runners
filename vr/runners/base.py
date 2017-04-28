@@ -3,14 +3,15 @@ from __future__ import print_function
 
 import argparse
 import os
-import pkg_resources
 import shutil
 import stat
 import tarfile
 
+import pkg_resources
 import requests
 import yaml
 import path
+import six
 
 from vr.common.paths import (
     get_container_name, get_buildfile_path, BUILDS_ROOT, get_app_path,
@@ -114,8 +115,15 @@ class BaseRunner(object):
         envsh_path = os.path.join(get_container_path(self.config), 'env.sh')
 
         with open(envsh_path, 'w') as f:
+
+            def _interpolate(val):
+                if isinstance(val, six.string_types) and val.startswith('$'):
+                    return os.environ.get(val[1:], '')
+                return val
+
             def format_var(key, val):
-                return 'export %s="%s"' % (key, val)
+                return 'export %s="%s"' % (key, _interpolate(val))
+
             e = self.config.env
             env_str = '\n'.join(format_var(k, e[k]) for k in e) + '\n'
             f.write(env_str)
