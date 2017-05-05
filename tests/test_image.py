@@ -30,7 +30,9 @@ def runner():
 
 class TestImageRunner(object):
 
-    def test_setup(self, runner):
+    @patch('vr.runners.image.get_lxc_version')
+    def test_setup(self, get_lxc_version_, runner):
+        get_lxc_version_.return_value = parse_version('1.0.8')
         runner.setup()
         p = get_container_path(runner.config)
         assert os.path.exists(os.path.join(p, 'env.sh')), 'env.sh missing'
@@ -42,7 +44,9 @@ class TestImageRunner(object):
         assert os.path.isdir(os.path.join(p, '../work')), \
             'work_dir does not exists'
 
-    def test_proc_lxc(self, runner):
+    @patch('vr.runners.image.get_lxc_version')
+    def test_proc_lxc(self, get_lxc_version_, runner):
+        get_lxc_version_.return_value = parse_version('1.0.8')
         runner.setup()
         p = get_container_path(runner.config)
         proc_lxc = open(os.path.join(p, '../proc.lxc'), 'r').read()
