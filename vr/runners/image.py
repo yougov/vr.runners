@@ -5,11 +5,11 @@ import stat
 
 import path
 
-from vr.common.paths import (get_container_name,
-                             get_container_path, VR_ROOT)
-from vr.common.utils import get_lxc_version
-from vr.runners.base import (BaseRunner, mkdir, ensure_file, untar,
-                             get_lxc_network_config)
+from vr.common.paths import (
+    get_container_name, get_container_path, get_lxc_work_path, VR_ROOT)
+from vr.common.utils import (
+    get_lxc_version, get_lxc_overlayfs_config_fmt, get_lxc_network_config)
+from vr.runners.base import BaseRunner, mkdir, ensure_file, untar
 
 
 IMAGES_ROOT = VR_ROOT + '/images'
@@ -96,13 +96,19 @@ class ImageRunner(BaseRunner):
         return os.path.join(IMAGES_ROOT, self.config.image_name, 'contents')
 
     def get_proc_lxc_tmpl_ctx(self):
-        return {
-            'proc_path': get_container_path(self.config),
+        proc_path = get_container_path(self.config)
+        work_path = get_lxc_work_path(self.config)
+        ctx = {
+            'proc_path': proc_path,
             'image_path': self.get_image_folder(),
+            'work_path': work_path,
             'network_config': get_lxc_network_config(get_lxc_version()),
             'memory_limits': self.get_lxc_memory_limits(),
             'volumes': self.get_lxc_volume_str(),
         }
+        overlay_config_fmt = get_lxc_overlayfs_config_fmt(get_lxc_version())
+        ctx['overlay_config'] = overlay_config_fmt % ctx
+        return ctx
 
     def ensure_char_devices(self):
         for path, devnums, perms in self.char_devices:

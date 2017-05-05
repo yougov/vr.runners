@@ -3,7 +3,7 @@ lxc.rootfs = %(proc_path)s
 %(network_config)s
 
 # Use an overlayfs for the OS image
-lxc.mount.entry = overlayfs %(proc_path)s overlayfs lowerdir=%(image_path)s,upperdir=%(proc_path)s 0 0
+%(overlay_config)s
 lxc.mount.entry = /etc/hostname %(proc_path)s/etc/hostname none bind,ro 0 0
 lxc.mount.entry = /etc/hosts %(proc_path)s/etc/hosts none bind,ro 0 0
 lxc.mount.entry = /etc/resolv.conf %(proc_path)s/etc/resolv.conf none bind,ro 0 0

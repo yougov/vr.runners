@@ -15,7 +15,7 @@ import six
 
 from vr.common.paths import (
     get_container_name, get_buildfile_path, BUILDS_ROOT, get_app_path,
-    get_container_path, get_proc_path)
+    get_container_path, get_proc_path, get_lxc_work_path)
 from vr.common.models import ProcData
 from vr.common.utils import (
     tmpdir, randchars, mkdir, lock_file, which, file_md5,
@@ -124,7 +124,7 @@ class BaseRunner(object):
             def format_var(key, val):
                 return 'export %s="%s"' % (key, _interpolate(val))
 
-            e = self.config.env
+            e = self.config.env or {}
             env_str = '\n'.join(format_var(k, e[k]) for k in e) + '\n'
             f.write(env_str)
 
@@ -260,10 +260,15 @@ class BaseRunner(object):
 
     def make_proc_dirs(self):
         print("Making directories")
+
         proc_path = get_proc_path(self.config)
-        container_path = get_container_path(self.config)
         mkdir(proc_path)
+
+        container_path = get_container_path(self.config)
         mkdir(container_path)
+
+        work_path = get_lxc_work_path(self.config)
+        mkdir(work_path)
 
         volumes = getattr(self.config, 'volumes', None) or []
         for _, inside in volumes:

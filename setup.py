@@ -25,7 +25,7 @@ params = dict(
     namespace_packages=name.split('.')[:-1],
     python_requires='>=2.7',
     install_requires=[
-        'vr.common>=4.4.0',
+        'vr.common>=4.9.0',
         'requests>=1.2.0',
         'path.py',
     ],
