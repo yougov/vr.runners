@@ -1,3 +1,9 @@
+2.12
+====
+
+* #188: Support later kernels by having overlayfs configuration
+  depending on LXC version
+
 2.11.1
 ======
 
