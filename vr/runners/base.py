@@ -389,6 +389,7 @@ def download_file(url, path):
         base = os.path.basename(path)
         with open(base, 'wb') as f:
             resp = requests.get(url, stream=True)
+            resp.raise_for_status()
             shutil.copyfileobj(resp.raw, f)
         shutil.move(base, path)
 

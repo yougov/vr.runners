@@ -1,3 +1,8 @@
+2.12.1
+======
+
+* Don't attempt to save a file that returns a 404 (or other error).
+
 2.12
 ====
 
