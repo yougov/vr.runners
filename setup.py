@@ -11,6 +11,11 @@ with io.open('README.rst', encoding='utf-8') as readme:
 
 name = 'vr.runners'
 description = 'Command line tools to launch procs.'
+nspkg_technique = 'managed'
+"""
+Does this package use "native" namespace packages or
+pkg_resources "managed" namespace packages?
+"""
 
 params = dict(
     name=name,
@@ -22,7 +27,10 @@ params = dict(
     url="https://github.com/yougov/" + name,
     packages=setuptools.find_packages(),
     include_package_data=True,
-    namespace_packages=name.split('.')[:-1],
+    namespace_packages=(
+        name.split('.')[:-1] if nspkg_technique == 'managed'
+        else []
+    ),
     python_requires='>=2.7',
     install_requires=[
         'vr.common>=4.9.0',
@@ -30,6 +38,17 @@ params = dict(
         'path.py',
     ],
     extras_require={
+        'testing': [
+            'pytest>=2.8',
+            'pytest-sugar',
+            'collective.checkdocs',
+            'backports.unittest_mock',
+        ],
+        'docs': [
+            'sphinx',
+            'jaraco.packaging>=3.2',
+            'rst.linker>=1.9',
+        ],
     },
     setup_requires=[
         'setuptools_scm>=1.15.0',
