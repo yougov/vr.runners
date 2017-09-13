@@ -44,9 +44,8 @@ params = dict(
     entry_points={
         'console_scripts': [
             'vrun = vr.runners.image:ImageRunner.invoke',
-            'vrun_precise = vr.runners.precise:PreciseRunner.invoke',
         ],
     },
 )
 if __name__ == '__main__':
-	setuptools.setup(**params)
+    setuptools.setup(**params)

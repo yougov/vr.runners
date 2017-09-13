@@ -1,3 +1,8 @@
+3.0
+===
+
+* Removed vrun_precise command and vr.runners.precise module.
+
 2.12.1
 ======
 
