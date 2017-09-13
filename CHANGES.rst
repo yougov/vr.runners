@@ -9,6 +9,9 @@
 * #188: Support later kernels by having overlayfs configuration
   depending on LXC version
 
+* Environment variables written as ``$VARNAME`` are substituted
+  with the value present on the host.
+
 2.11.1
 ======
 
