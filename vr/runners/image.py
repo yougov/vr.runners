@@ -6,7 +6,7 @@ import stat
 import path
 
 from vr.common.paths import (
-    get_container_name, get_container_path, get_lxc_work_path, VR_ROOT)
+    get_container_path, get_lxc_work_path, VR_ROOT)
 from vr.common.utils import (
     get_lxc_version, get_lxc_overlayfs_config_fmt,
     get_lxc_network_config, which)
@@ -64,7 +64,7 @@ class ImageRunner(BaseRunner):
     )
 
     def setup(self):
-        print("Setting up", get_container_name(self.config))
+        print("Setting up", self.container_name)
         mkdir(IMAGES_ROOT)
         self.ensure_image()
         self.make_proc_dirs()
@@ -76,30 +76,15 @@ class ImageRunner(BaseRunner):
         self.write_env_sh()
         self.ensure_container()
 
-    def ensure_container(self):
-        """Make sure container exists. It's only needed on newer
-        versions of LXC."""
-        from pkg_resources import parse_version
-        if get_lxc_version() < parse_version('2.0.0'):
-            # Nothing to do for old versions of LXC
-            return
-
-        name = get_container_name(self.config)
-        args = [
-            'lxc-create',
-            '--name', name,
-            '--template', 'none',
-        ]
-        os.execve(which('lxc-create')[0], args, {})
-
     def ensure_image(self):
         """
         Ensure that config.image_url has been downloaded and unpacked.
         """
         image_folder = self.get_image_folder()
         if os.path.exists(image_folder):
-            print('OS image directory {} exists...not overwriting' \
-                .format(image_folder))
+            print(
+                'OS image directory {} exists...not overwriting' .format(
+                    image_folder))
             return
 
         ensure_image(
@@ -162,4 +147,5 @@ class tmp_umask(object):
         os.umask(self.orig_mask)
 
 
-__name__ == '__main__' and ImageRunner.invoke()
+if __name__ == '__main__':
+    ImageRunner.invoke()

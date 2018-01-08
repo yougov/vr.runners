@@ -70,12 +70,16 @@ class BaseRunner(object):
             getattr(cmd, 'lock', lock_file)(fid)
             cmd()
 
+    @property
+    def container_name(self):
+        return get_container_name(self.config)
+
     # pylint: disable=no-self-argument,no-member
     def __close_file(fid):
         fid.close()
 
     def setup(self):
-        print("Setting up", get_container_name(self.config))
+        print("Setting up", self.container_name)
         self.make_proc_dirs()
         self.ensure_build()
         self.write_proc_lxc()
@@ -84,11 +88,11 @@ class BaseRunner(object):
         self.write_env_sh()
 
     def run(self):
-        print("Running", get_container_name(self.config))
+        print("Running", self.container_name)
         self._lxc_start()
 
     def shell(self):
-        print("Running shell for", get_container_name(self.config))
+        print("Running shell for", self.container_name)
         self._lxc_start(special_cmd='/bin/bash')
     shell.lock = __close_file
 
@@ -154,6 +158,23 @@ class BaseRunner(object):
             procs = yaml.safe_load(f)
         return procs[self.config.proc_name]
 
+    def ensure_container(self, name=None):
+        """Make sure container exists. It's only needed on newer
+        versions of LXC."""
+        if get_lxc_version() < pkg_resources.parse_version('2.0.0'):
+            # Nothing to do for old versions of LXC
+            return
+
+        if name is None:
+            name = self.container_name
+
+        args = [
+            'lxc-create',
+            '--name', name,
+            '--template', 'none',
+        ]
+        os.system(' '.join(args))
+
     def ensure_build(self):
         """
         If self.config.build_url is set, ensure it's been downloaded to the
@@ -183,13 +204,14 @@ class BaseRunner(object):
 
     def get_lxc_args(self, special_cmd=None):
 
-        name = get_container_name(self.config)
+        name = self.container_name
         if special_cmd:
             cmd = special_cmd
             # Container names must be unique, so to allow running a shell or
             # uptests next to the app container we have to add more
             # stuff to the name.
             name += '-tmp' + randchars()
+            self.ensure_container(name)
         else:
             cmd = 'run'
 
