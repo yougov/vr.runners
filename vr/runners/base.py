@@ -197,6 +197,7 @@ class BaseRunner(object):
             'lxc-start',
             '--name', name,
             '--rcfile', os.path.join(get_proc_path(self.config), 'proc.lxc'),
+            '--foreground',
         ] + log_args + [
             '--',
 
