@@ -37,6 +37,7 @@ class BaseRunner(object):
             'teardown': self.teardown,
         }
 
+        # pylint: disable=unused-variable
         cmd_list = ', '.join(self.commands)
         parser = argparse.ArgumentParser()
         cmd_help = 'One of: {cmd_list}'.format(**locals())
@@ -60,6 +61,7 @@ class BaseRunner(object):
             getattr(cmd, 'lock', lock_file)(fid)
             cmd()
 
+    # pylint: disable=no-self-argument,no-member
     def __close_file(fid):
         fid.close()
 
@@ -257,7 +259,8 @@ class BaseRunner(object):
         The build will be cleaned up elsewhere.
         """
         proc_path = get_proc_path(self.config)
-        os.path.isdir(proc_path) and shutil.rmtree(proc_path)
+        if os.path.isdir(proc_path):
+            shutil.rmtree(proc_path)
 
     def make_proc_dirs(self):
         print("Making directories")
@@ -366,8 +369,9 @@ def untar(tarpath, outfolder, owners=None, overwrite=True, fixperms=True):
             if overwrite:
                 shutil.rmtree(outfolder)
             else:
-                raise IOError(('Cannot untar %s because %s already exists and '
-                              'overwrite=False') % (tarfile, outfolder))
+                raise IOError(
+                    ('Cannot untar %s because %s already exists and '
+                     'overwrite=False') % (tarfile, outfolder))
         shutil.move('contents', outfolder)
 
 
