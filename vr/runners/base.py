@@ -22,6 +22,13 @@ from vr.common.utils import (
     get_lxc_version, get_lxc_network_config)
 
 
+def get_version():
+    try:
+        return pkg_resources.get_distribution('vr.runners').version
+    except:
+        return None
+
+
 class BaseRunner(object):
     """
     >>> callable(BaseRunner.shell.lock)
@@ -43,6 +50,8 @@ class BaseRunner(object):
         cmd_help = 'One of: {cmd_list}'.format(**locals())
         parser.add_argument('command', help=cmd_help)
         parser.add_argument('file', help="Path to proc.yaml file.")
+        parser.add_argument(
+            '--version', action='version', version=get_version())
 
         args = parser.parse_args()
 
