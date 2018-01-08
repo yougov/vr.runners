@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 import argparse
+import hashlib
 import os
 import shutil
 import stat
@@ -18,7 +19,7 @@ from vr.common.paths import (
     get_container_path, get_proc_path, get_lxc_work_path)
 from vr.common.models import ProcData
 from vr.common.utils import (
-    tmpdir, randchars, mkdir, lock_file, which, file_md5,
+    tmpdir, mkdir, lock_file, which, file_md5,
     get_lxc_version, get_lxc_network_config)
 
 
@@ -172,7 +173,7 @@ class BaseRunner(object):
             'lxc-create',
             '--name', name,
             '--template', 'none',
-            '>', '/dev/null',
+            '>', '/dev/null', '2>&1',
         ]
         os.system(' '.join(args))
 
@@ -210,8 +211,11 @@ class BaseRunner(object):
             cmd = special_cmd
             # Container names must be unique, so to allow running a shell or
             # uptests next to the app container we have to add more
-            # stuff to the name.
-            name += '--tmp-' + randchars()
+            # stuff to the name. We assume that "special_cmd" are
+            # ephemeral so we create a unique container name per
+            # special_cmd, to allow creating too many containers (new
+            # versions of LXC don't clean after themselves!)
+            name += '--tmp-' + hashlib.md5(special_cmd).hexdigest()
             self.ensure_container(name)
         else:
             cmd = 'run'
