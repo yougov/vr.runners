@@ -24,6 +24,7 @@ def runner():
         # 'env': {},
     })
     r.ensure_image = Mock()
+    r.ensure_container = Mock()
     r.ensure_char_devices = Mock()
     return r
 
