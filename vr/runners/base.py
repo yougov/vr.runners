@@ -172,6 +172,7 @@ class BaseRunner(object):
             'lxc-create',
             '--name', name,
             '--template', 'none',
+            '>', '/dev/null',
         ]
         os.system(' '.join(args))
 
@@ -210,7 +211,7 @@ class BaseRunner(object):
             # Container names must be unique, so to allow running a shell or
             # uptests next to the app container we have to add more
             # stuff to the name.
-            name += '-tmp' + randchars()
+            name += '--tmp-' + randchars()
             self.ensure_container(name)
         else:
             cmd = 'run'
