@@ -231,12 +231,17 @@ class BaseRunner(object):
                     self.config.app_folder, '.lxcdebug.log'),
             ]
 
+        extra_params = []
+        if get_lxc_version() >= pkg_resources.parse_version('2.0.0'):
+            # Early versions of LXC either didn't have the
+            # --foreground flag or defaulted to it.
+            extra_params.append('--foreground')
+
         return [
             'lxc-start',
             '--name', name,
             '--rcfile', os.path.join(get_proc_path(self.config), 'proc.lxc'),
-            '--foreground',
-        ] + log_args + [
+        ] + extra_params + log_args + [
             '--',
 
             # Note: using `su` seems to crash lxc container when
