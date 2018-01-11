@@ -215,7 +215,11 @@ class BaseRunner(object):
             # ephemeral so we create a unique container name per
             # special_cmd, to allow creating too many containers (new
             # versions of LXC don't clean after themselves!)
-            name += '--tmp-' + hashlib.md5(special_cmd).hexdigest()
+
+            # Note: container name can't be too long, because of a
+            # limitation of earlier versions of LXC
+            name += '-TMP' + hashlib.md5(special_cmd).hexdigest()[:8]
+
             self.ensure_container(name)
         else:
             cmd = 'run'
