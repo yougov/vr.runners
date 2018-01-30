@@ -26,7 +26,7 @@ from vr.common.utils import (
 def get_version():
     try:
         return pkg_resources.get_distribution('vr.runners').version
-    except:
+    except Exception:
         return None
 
 
