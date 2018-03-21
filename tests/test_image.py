@@ -1,17 +1,17 @@
 import os
-from pkg_resources import parse_version
 from unittest.mock import Mock, patch
 
+from pkg_resources import parse_version
 import pytest
-
-import vr.runners.image as I
 from vr.common.models import ProcData
 from vr.common.paths import get_container_path
+
+from vr.runners import image
 
 
 @pytest.fixture()
 def runner():
-    r = I.ImageRunner()
+    r = image.ImageRunner()
     r.config = ProcData({
         'app_name': 'myApp',
         'proc_name': 'proc.exe',

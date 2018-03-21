@@ -9,7 +9,7 @@ from vr.common.paths import (
     get_container_path, get_lxc_work_path, VR_ROOT)
 from vr.common.utils import (
     get_lxc_version, get_lxc_overlayfs_config_fmt,
-    get_lxc_network_config, which)
+    get_lxc_network_config)
 from vr.runners.base import BaseRunner, mkdir, ensure_file, untar
 
 
@@ -114,8 +114,8 @@ class ImageRunner(BaseRunner):
         return ctx
 
     def ensure_char_devices(self):
-        for path, devnums, perms in self.char_devices:
-            fullpath = get_container_path(self.config) + path
+        for path_, devnums, perms in self.char_devices:
+            fullpath = get_container_path(self.config) + path_
             ensure_char_device(fullpath, devnums, perms)
 
 
@@ -127,7 +127,9 @@ def ensure_char_device(path, devnums, perms):
     print("Making device nodes")
     if not os.path.exists(path):
         with tmp_umask(0):
-            print("mknod -m %o %s c %s %s" % (perms, path, devnums[0], devnums[1]))
+            print(
+                "mknod -m %o %s c %s %s"
+                % (perms, path, devnums[0], devnums[1]))
             mkdir(os.path.dirname(path))
             mode = (stat.S_IFCHR | perms)
             os.mknod(path, mode, os.makedev(*devnums))

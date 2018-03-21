@@ -389,7 +389,7 @@ def untar(tarpath, outfolder, owners=None, overwrite=True, fixperms=True):
         if ext not in ('gz', 'bz2'):
             raise ValueError('tarpath must point to a .gz or .bz2 file')
 
-        tf = tarfile.open(tarpath, 'r:'+ext)
+        tf = tarfile.open(tarpath, 'r:' + ext)
         try:
             os.mkdir('contents')
             tf.extractall('contents')
