@@ -215,10 +215,14 @@ class BaseRunner(object):
             # ephemeral, so create a unique container name per
             # special_cmd, to allow creating too many containers (new
             # versions of LXC don't clean after themselves).
+            # Use a hash of the command to eliminate characters that
+            # are invalid filename characters.
 
             # Note: container name can't be too long, because of a
             # limitation of earlier versions of LXC
-            name += '-TMP' + hashlib.md5(special_cmd).hexdigest()[:8]
+            uniq = hashlib.md5(special_cmd.encode('utf-8')).hexdigest()[:8]
+            stuff = '-TMP' + uniq
+            name += stuff
 
             self.ensure_container(name)
         else:

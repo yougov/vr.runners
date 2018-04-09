@@ -1,3 +1,9 @@
+3.0.1
+=====
+
+* #224: Correct TypeError on Python 3 when hashing container
+  name for uptests.
+
 3.0
 ===
 
