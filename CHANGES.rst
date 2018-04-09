@@ -1,4 +1,4 @@
-3.0.1
+3.1.4
 =====
 
 * #224: Correct TypeError on Python 3 when hashing container
