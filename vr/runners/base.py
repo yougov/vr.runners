@@ -210,11 +210,11 @@ class BaseRunner(object):
         if special_cmd:
             cmd = special_cmd
             # Container names must be unique, so to allow running a shell or
-            # uptests next to the app container we have to add more
-            # stuff to the name. We assume that "special_cmd" are
-            # ephemeral so we create a unique container name per
+            # uptests next to the app container, add more
+            # stuff to the name. Assumes that "special_cmd" are
+            # ephemeral, so create a unique container name per
             # special_cmd, to allow creating too many containers (new
-            # versions of LXC don't clean after themselves!)
+            # versions of LXC don't clean after themselves).
 
             # Note: container name can't be too long, because of a
             # limitation of earlier versions of LXC
