@@ -1,3 +1,9 @@
+3.2.0
+=====
+
+* Add support for decompressing tarfiles with lzma compression
+  (.xz extension).
+
 3.1.4
 =====
 

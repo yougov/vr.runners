@@ -390,8 +390,8 @@ def untar(tarpath, outfolder, owners=None, overwrite=True, fixperms=True):
     with tmpdir():
         _, _, ext = tarpath.rpartition('.')
 
-        if ext not in ('gz', 'bz2'):
-            raise ValueError('tarpath must point to a .gz or .bz2 file')
+        if ext not in ('gz', 'bz2', 'xz'):
+            raise ValueError('tarpath must point to a .gz, .bz2, or .xz file')
 
         tf = tarfile.open(tarpath, 'r:' + ext)
         try:
