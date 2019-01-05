@@ -1,3 +1,8 @@
+3.3.0
+=====
+
+* Pin against dependencies for namespace compatibility.
+
 3.2.0
 =====
 
