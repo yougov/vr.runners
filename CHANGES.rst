@@ -1,3 +1,8 @@
+4.0.0
+=====
+
+* Switch to pkgutil-style namespace package.
+
 3.3.0
 =====
 
